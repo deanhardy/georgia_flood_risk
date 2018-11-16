@@ -1,15 +1,16 @@
-# set working directory on Windows
-setwd("C:/Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
+rm(list=ls())
 
 library(tidyverse) ## load tidyverse package
-tidyverse_update() ## check for updates 
 ##library(timeSeries)
 
+## set data directory
+datadir <- ("C:/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
+
 ## read in tidal data 
-df <- read.csv("data/height_allobserved_ml.csv", header=TRUE)
+df <- read.csv(file.path(datadir, "data/height_allobserved_ml.csv"), header=TRUE)
 df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct format
 
-df <- mutate(df, height = height +4.178) ## convert to mllw elevation datum
+df <- mutate(df, height = height + 4.178) ## convert to mllw elevation datum
 
 ## select out highest high tides and low tides
 hi10 <- top_n(df, 10, height)

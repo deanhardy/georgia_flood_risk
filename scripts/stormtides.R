@@ -8,8 +8,8 @@ library(gridExtra)
 datadir <- ("C:/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
 
 ## read in tidal data 
-df <- read.csv(file.path(datadir, "data/stormtides.csv"))
-df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct format
+df <- read.csv(file.path(datadir, "data/stormtides.csv"), header = T, stringsAsFactors = F)
+df$datetime <- as.POSIXct(df$datetime, "%m/%d/%Y hh:mm:ss %b") ## convert datetime column to correct format
 
 ## NAVD88 adjustment of Meridian Landing USGS gage data to MLLW datum is to add 4.178 ft based on 
 ## VDATUM at Hudson Creek entrace
