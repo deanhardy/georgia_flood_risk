@@ -5,11 +5,12 @@ library(tidyverse) ## load tidyverse package
 library(gridExtra)
 
 ## set data directory
-datadir <- ("C:/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
+datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
 
 ## read in tidal data 
 df <- read.csv(file.path(datadir, "data/stormtides.csv"), header = T, stringsAsFactors = F)
-df$datetime <- as.POSIXct(df$datetime, "%m/%d/%Y hh:mm:ss %b") ## convert datetime column to correct format
+df$datetime <- as.POSIXct(df$datetime, tz = "", format = "%Y-%m-%d %H:%M") ## convert datetime column to correct format
+
 
 ## NAVD88 adjustment of Meridian Landing USGS gage data to MLLW datum is to add 4.178 ft based on 
 ## VDATUM at Hudson Creek entrace
@@ -84,6 +85,34 @@ df3 <- rbind(df2, mlpr3) ## join predicted to main dataframe
 df4 <- rbind(df3, mlsr) ## join surge to main dataframe
 
 
+## run for King Tide
+## first filter out observed
+mlob <- 
+  df %>%
+  filter(site == "Meridian Landing") %>%
+  filter(storm == "King Tide") %>%
+  filter(type == "observed")
+
+mlpr <- 
+  df %>% 
+  filter(site =="Fort Pulaski") %>% 
+  filter(type == "predicted") %>%
+  filter(storm == "King Tide") %>%
+  mutate(height = height*1.05, site = "Meridian Landing", datetime = datetime + 34*60)
+
+## create function to interpolate values
+f <- splinefun(mlpr$datetime, mlpr$height)
+
+##interpolate values from time 1 to 2 by defined interval
+mlpr2 <- f(seq(from = mlpr$datetime[1]+120, to = mlpr$datetime[1199]-60, by = 15*60))
+mlpr3 <- mutate(mlob, type = "predicted", height = mlpr2)
+
+surge <- mlob$height - mlpr3$height  ## calculate surge as observed minus predicted
+mlsr <- mutate(mlob, type = "surge", height = surge)
+
+df5 <- rbind(df4, mlpr3) ## join predicted to main dataframe
+df6 <- rbind(df5, mlsr) ## join surge to main dataframe
+
 
 
 ################################
@@ -120,11 +149,11 @@ irma <- ggplot(filter(df4, storm == "Irma", type != "surge"), aes(datetime, heig
          linetype = FALSE)
 
 ## export as pngs and tiffs
-tiff("figures/stormtides_compare_color.tif", width = 12, height = 6, units = 'in', res = 300)
+tiff(file.path(datadir, "figures/stormtides_compare_color.tif"), width = 12, height = 6, units = 'in', res = 300)
 grid.arrange(matthew, irma, ncol = 2)
 dev.off()
 
-png("figures/stormtides_compare_color.png", width = 12, height = 6, units = 'in', res = 150)
+png(file.path(datadir, "figures/stormtides_compare_color.png"), width = 12, height = 6, units = 'in', res = 150)
 grid.arrange(matthew, irma, ncol = 2)
 dev.off()
 
@@ -270,56 +299,70 @@ ggplot(filter(df4, storm == "Irma", type == "surge"), aes(datetime, height)) +
 dev.off()
 
 
+
+
 ################################
 ################################
 ## compare tidal heights at meridian landing
 
-matthew <- ggplot(filter(df4, storm == "Matthew", site == "Meridian Landing",
-                         type != "surge"), aes(datetime, height)) +
+king <- ggplot(filter(df6, storm == "King Tide", site == "Meridian Landing",
+                         type != "surge", datetime >="2015-10-26" & datetime <= "2015-10-29"), aes(datetime, height)) +
   geom_line(aes(linetype = type)) +
   xlab("Date") + 
   ylab("Tidal Height (feet)") +
-  scale_y_continuous(limits = c(-1,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-1,1,2,4,5,7,8,10,11)) +
-  scale_x_datetime(date_breaks = "1 day", date_labels = "%m/%d/%y") +
-  # scale_color_manual(values = c("#7fc97f", "#fdc086", "#386cb0"),
-  #                    breaks = c("Fernandina Beach", "Meridian Landing", "Fort Pulaski")) +
-  ggtitle("Hurricane Matthew - 2016") +
-  labs(linetype = "Water Level", caption = "(Observed data for Meridian Landing from\nUSGS/DNR/SINERR and predicted data estimated based on Fort Pulaski tide station)") +
-  theme(plot.caption = element_text(size = 8, color = "white"), legend.position = c(0.89, 0.91)) +
+  scale_y_continuous(limits = c(-2,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-2,-1,1,2,4,5,7,8,10,11)) +
+  scale_x_datetime(date_breaks = "1 day", date_labels = "%m/%d") +
+  ggtitle("King Tide - 2015") +
+  labs(linetype = "Water Level") +
+  theme(axis.title = element_text(size = 16),
+        axis.text = element_text(size = 13),
+        title = element_text(size = 16),
+        legend.position = c(0.2, 0.91),
+        legend.text = element_text(size = 16),
+        axis.title.x = element_text(color = "white")) +
   guides(color = FALSE, linetype =  guide_legend(keyheight = 0.2, default.unit = "inch"))
 
+matthew <- ggplot(filter(df6, storm == "Matthew", site == "Meridian Landing",
+                         type != "surge", datetime >="2016-10-06" & datetime <= "2016-10-09"), aes(datetime, height)) +
+  geom_line(aes(linetype = type)) +
+  xlab("Date") + 
+  ylab("Tidal Height (feet)") +
+  scale_y_continuous(limits = c(-2,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-2,-1,1,2,4,5,7,8,10,11)) +
+  scale_x_datetime(date_breaks = "1 day", date_labels = "%m/%d") +
+  ggtitle("Hurricane Matthew - 2016") +
+  labs(linetype = "Water Level") +
+  theme(axis.title = element_text(size = 16),
+        axis.text = element_text(size = 13),
+        title = element_text(size = 16),
+        legend.position = c(0.8, 0.91),
+        legend.text = element_text(size = 16),
+        axis.title.y = element_text(color = "white")) +
+  guides(color = guide_legend(keyheight = 0.3, default.unit = "inch"),
+         linetype = FALSE)
+
 ## Irma plot - compare gauges
-irma <- ggplot(filter(df4, storm == "Irma", site == "Meridian Landing",
-                      type != "surge"), aes(datetime, height)) +
+irma <- ggplot(filter(df6, storm == "Irma", site == "Meridian Landing",
+                      type != "surge", datetime >="2017-09-10" & datetime <= "2017-09-13"), aes(datetime, height)) +
   geom_line(aes(linetype = type)) +
   xlab("Date") + 
   ylab("Tidal Height (feet)") + 
-  scale_y_continuous(limits = c(-1,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-1,1,2,4,5,7,8,10,11)) +
-  scale_x_datetime(date_breaks = "1 day", date_labels = "%m/%d/%y") +
-  # scale_color_manual(name = c("Location"), values = c("#7fc97f", "#fdc086", "#386cb0"),
-  #                    breaks = c("Fernandina", "Meridian Landing", "Fort Pulaski")) +
+  scale_y_continuous(limits = c(-2,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-2,-1,1,2,4,5,7,8,10,11)) +
+  scale_x_datetime(date_breaks = "1 day", date_labels = "%m/%d") +
   ggtitle("Hurricane Irma - 2017") + 
-  labs(linetype = "Water Level", caption = "(All data for Fort Pulaski & Fernandina from NOAA; Observed data for Meridian Landing from USGS/DNR/SINERR gauge and\nadjusted to tidal height; predicted data estimated from NOAA's Hudson Creek Entrance subordinate station)") +
-  theme(plot.caption = element_text(size = 8), legend.position = c(0.86, 0.89), 
-        axis.title.y = element_text(color = "white")) +
-  guides(color = guide_legend(keyheight = 0.2, default.unit = "inch"),
+  labs(linetype = "Water Level") +
+  theme(axis.title = element_text(size = 16),
+        axis.text = element_text(size = 13),
+        title = element_text(size = 16),
+        legend.position = c(0.86, 0.89), 
+        axis.title.y = element_text(color = "white"),
+        axis.title.x = element_text(color = "white"),
+        plot.margin = margin(5.5,11,5.5,5.5,'pt')) +
+  guides(color = guide_legend(keyheight = 0.3, default.unit = "inch"),
          linetype = FALSE)
 
 ## export as pngs and tiffs
-tiff(file.path(datadir, "figures/stormtides_compare_ml.tif"), width = 12, height = 6, units = 'in', res = 300)
-grid.arrange(matthew, irma, ncol = 2)
+tiff(file.path(datadir, "figures/stormtides_compare_ml.tif"), width = 13.33, height = 6, units = 'in', res = 300)
+grid.arrange(king, matthew, irma, ncol = 3)
 dev.off()
 
-
-#######################
-#######################
-
-ml.irma <- 
-  df4 %>%
-  filter(site == "Meridian Landing") %>%
-  filter(storm == "Irma")
-
-
-filter(ml.irma, type == "predicted", datetime == "2017-09-11 13:30") 
-#%>% filter(height == max(height))
 
