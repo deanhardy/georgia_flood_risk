@@ -29,7 +29,7 @@ lo10 <-
   top_n(10, height)
 
 fig <- ggplot(filter(df, type == 'high'), aes(datetime, height)) +
-  geom_point(pch=19, size = 1) + 
+  geom_point(pch=19, size = 1, color = 'grey') + 
   geom_smooth(method = lm) + 
   geom_hline(yintercept = 9.2, color = 'red') + 
   scale_x_datetime(date_breaks = "1 years", date_labels = "%y") + 
