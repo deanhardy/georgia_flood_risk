@@ -6,7 +6,8 @@ library(gridExtra)
 
 ## set data directory
 datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
-
+datum_conv = 4.178
+  
 ## read in tidal data 
 df <- read.csv(file.path(datadir, "data/stormtides.csv"), header = T, stringsAsFactors = F)
 df$datetime <- as.POSIXct(df$datetime, tz = "", format = "%Y-%m-%d %H:%M") ## convert datetime column to correct format
@@ -14,7 +15,7 @@ df$datetime <- as.POSIXct(df$datetime, tz = "", format = "%Y-%m-%d %H:%M") ## co
 
 ## NAVD88 adjustment of Meridian Landing USGS gage data to MLLW datum is to add 4.178 ft based on 
 ## VDATUM at Hudson Creek entrace
-df <- mutate(df, height = ifelse(site == "Meridian Landing", height + 4.178, height))
+df <- mutate(df, height = ifelse(site == "Meridian Landing", height + datum_conv, height))
 head(filter(df, site == "Meridian Landing"))     
 
 temp <- df %>% filter(site == "Meridian Landing") %>% filter(storm =="Matthew")
@@ -308,6 +309,8 @@ dev.off()
 king <- ggplot(filter(df6, storm == "King Tide", site == "Meridian Landing",
                          type != "surge", datetime >="2015-10-26" & datetime <= "2015-10-29"), aes(datetime, height)) +
   geom_line(aes(linetype = type)) +
+#  geom_hline(yintercept = (5 + datum_conv)) + ## St Simons flood stage converted to MLLW (ft)
+  geom_hline(yintercept = 9.2, color = 'red', linetype = 'solid') + ## Fort Pulaski flood stage (ft)
   xlab("Date") + 
   ylab("Tidal Height (feet)") +
   scale_y_continuous(limits = c(-2,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-2,-1,1,2,4,5,7,8,10,11)) +
@@ -325,6 +328,7 @@ king <- ggplot(filter(df6, storm == "King Tide", site == "Meridian Landing",
 matthew <- ggplot(filter(df6, storm == "Matthew", site == "Meridian Landing",
                          type != "surge", datetime >="2016-10-06" & datetime <= "2016-10-09"), aes(datetime, height)) +
   geom_line(aes(linetype = type)) +
+  geom_hline(yintercept = 9.2, color = 'red', linetype = 'solid') + ## Fort Pulaski flood stage (ft)
   xlab("Date") + 
   ylab("Tidal Height (feet)") +
   scale_y_continuous(limits = c(-2,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-2,-1,1,2,4,5,7,8,10,11)) +
@@ -344,6 +348,7 @@ matthew <- ggplot(filter(df6, storm == "Matthew", site == "Meridian Landing",
 irma <- ggplot(filter(df6, storm == "Irma", site == "Meridian Landing",
                       type != "surge", datetime >="2017-09-10" & datetime <= "2017-09-13"), aes(datetime, height)) +
   geom_line(aes(linetype = type)) +
+  geom_hline(yintercept = 9.2, color = 'red', linetype = 'solid') + ## Fort Pulaski flood stage (ft)
   xlab("Date") + 
   ylab("Tidal Height (feet)") + 
   scale_y_continuous(limits = c(-2,12.5), breaks = c(0,3,6,9,12), minor_breaks = c(-2,-1,1,2,4,5,7,8,10,11)) +

@@ -4,10 +4,19 @@ library(tidyverse) ## load tidyverse package
 ##library(timeSeries)
 
 ## set data directory
-datadir <- ("C:/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
+datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
 
 ## read in tidal data 
 df <- read.csv(file.path(datadir, "data/height_allobserved_ml.csv"), header=TRUE)
+df <- read.delim(file.path(datadir, "data/original/height_allobserved_ml.txt"), header=TRUE, sep = '\t', dec = '.',
+                 skip = 29) %>%
+  slice(2:n()) %>%
+  rename(high = X35070_00065_00021, low = X35071_00065_00024,
+         quality = X35070_00065_00021_cd, quality2 = X35071_00065_00024_cd) %>%
+  select(-quality, -quality2) %>%
+  gather(key = type, value = height, 4:5) %>%
+  mutate(height = as.numeric(height))
+
 df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct format
 
 df <- mutate(df, height = height + 4.178) ## convert to mllw elevation datum
@@ -19,12 +28,22 @@ lo10 <-
   filter(type == "low") %>%
   top_n(10, height)
 
-png("figures/meridian_tides_alltime.png", res=150, unit='in', width = 7, height = 5)
-ggplot(df, aes(datetime, height, color = type)) +
-  geom_point(pch=19) + 
+fig <- ggplot(filter(df, type == 'high'), aes(datetime, height)) +
+  geom_point(pch=19, size = 1) + 
+  geom_smooth(method = lm) + 
+  geom_hline(yintercept = 9.2, color = 'red') + 
   scale_x_datetime(date_breaks = "1 years", date_labels = "%y") + 
-  scale_y_continuous(minor_breaks = c(-4,-3,-2,-1,1,2,3,4,6,7,8,9,11,12)) +
+  scale_y_continuous(breaks = c(0,1,2,3,4,5,6,7,8,9,10,11,12),
+                     labels = c(0,1,2,3,4,5,6,7,8,9,10,11,12)) +
   xlab("Year") +
-  ylab("Tidal Height (feet)") +
-  ggtitle("Meridian Landing Gage")
+  ylab("High Tide Height (feet)") +
+  #ggtitle("Meridian Landing Gage") + 
+  theme(axis.title = element_text(size = 20),
+        axis.text = element_text(size = 18),
+        title = element_text(size = 20))
+fig
+
+tiff(file.path(datadir, 'figures/meridian_tides_alltime.tiff'), res=300, unit='in', width = 13.33, height = 7.0, 
+               compression = 'lzw')
+fig
 dev.off()
