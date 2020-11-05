@@ -48,7 +48,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height)) +
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black'),
         legend.position = "none") + 
-  annotate(geom="text", y = 9.85, x = df$datetime[3700], label = "Fort Pulaski\nFlood Stage", col = 'red')
+  annotate(geom="text", y = 9.5, x = df$datetime[3700], label = "Fort Pulaski\nFlood Stage", col = 'red')
 fig
 
 tiff(file.path(datadir, 'figures/meridian_tides_alltime.tiff'), res=300, unit='in', width = 6, height = 4, 
