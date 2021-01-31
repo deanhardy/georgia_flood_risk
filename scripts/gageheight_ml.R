@@ -29,16 +29,16 @@ lo10 <-
   top_n(10, height)
 
 # lims <- as.POSIXct(strptime(c("2011-01-01 03:00","2011-01-01 16:00"), format = "%Y-%m-%d %H:%M"))    
-fnt <- 8
+fnt <- 16
 
 fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*0.3048)) +
-  geom_point(pch=19, size = 0.05, color = 'grey') + 
+  geom_point(pch=19, size = 1, color = 'grey') + 
   geom_point(mapping = aes(datetime, height*0.3048, col = 'red'),
              data = filter(df, type == 'high' & height >= 9.5),
-             size = 1, pch = 17, inherit.aes = TRUE) +
+             size = 5, pch = 17, inherit.aes = TRUE) +
   geom_smooth(method = lm, col = 'black', size = 0.5) + 
   geom_hline(yintercept = 9.5*0.3048, color = 'red', linetype = 'dashed') + ## 9.5 feet is flood stage at Fort Pulaski
-  scale_x_datetime(date_breaks = "5 years", date_labels = "%Y", 
+  scale_x_datetime(date_breaks = "2 years", date_labels = "%Y", 
                    limits = c(df$datetime[1], df$datetime[14668]), expand = c(0.01, 0.0)) + 
   scale_y_continuous(breaks = c(0,1,2,3,4),
                      labels = c(0,1,2,3,4),
@@ -59,7 +59,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*0.3048)) +
   annotate(geom="text", y = 9.5*0.3048, x = df$datetime[3700], label = "Fort Pulaski\nFlood Stage", col = 'red')
 fig
 
-tiff(file.path(datadir, 'figures/meridian_tides_alltime.tiff'), res=600, unit='in', width = 3.3, height = 3, 
+tiff(file.path(datadir, 'figures/meridian_tides_alltime.tiff'), res=300, unit='in', width = 13.33, height = 7.5, 
                compression = 'lzw')
 fig
 dev.off()
