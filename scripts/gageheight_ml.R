@@ -7,7 +7,9 @@ library(tidyverse) ## load tidyverse package
 datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
 
 ## read in high/low tidal data from gauge station 
-# df <- read.csv(file.path(datadir, "datsa/height_allobserved_ml.csv"), header=TRUE) ##meridian landing
+## https://waterdata.usgs.gov/ga/nwis/nwismap/?site_no=022035975&agency_cd=USGS
+## gage datum is 1.10 feet above NAVD88
+# df <- read.csv(file.path(datadir, "data/height_allobserved_ml.csv"), header=TRUE) ##meridian landing
 df <- read.delim(file.path(datadir, "data/original/20201104_height_allobserved_ml.txt"), header=TRUE, sep = '\t', dec = '.',
                  skip = 29) %>%
   slice(2:n()) %>%
@@ -19,7 +21,8 @@ df <- read.delim(file.path(datadir, "data/original/20201104_height_allobserved_m
 
 df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct format
 
-df <- mutate(df, height = height + 4.178) ## convert to mllw elevation datum
+df <- mutate(df, height = height + 5.276) %>% ## convert station datum NAVD88=1.1 ft to mllw elevation datum based on VDATUM at Hudson Creek entrance
+  mutate(year = year(datetime))
 
 ## select out highest high tides and low tides
 hi10 <- top_n(df, 10, height)
