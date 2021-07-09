@@ -4,10 +4,10 @@ library(tidyverse) ## load tidyverse package
 ##library(timeSeries)
 
 ## set data directory
-datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
+datadir <- "C:/Users/dhardy/Dropbox/r_data/georgia_hurricanes"
 
 ## read in high/low tidal data from gauge station 
-# df <- read.csv(file.path(datadir, "datsa/height_allobserved_ml.csv"), header=TRUE)
+# df <- read.csv(file.path(datadir, "data/height_allobserved_ml.csv"), header=TRUE)
 df <- read.delim(file.path(datadir, "data/original/20201104_height_allobserved_ml.txt"), header=TRUE, sep = '\t', dec = '.',
                  skip = 29) %>%
   slice(2:n()) %>%
