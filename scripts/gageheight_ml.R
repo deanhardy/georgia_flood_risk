@@ -5,7 +5,7 @@ library(lubridate)
 ##library(timeSeries)
 
 ## set data directory
-datadir <- "C:/Users/dhardy/Dropbox/r_data/georgia_hurricanes"
+datadir <- "/Users/dhardy/Dropbox/r_data/georgia_hurricanes"
 
 ## read in high/low tidal data from gauge station 
 ## https://waterdata.usgs.gov/ga/nwis/nwismap/?site_no=022035975&agency_cd=USGS
@@ -42,7 +42,7 @@ lo10 <-
 fnt <- 12
 A <- 1## convert to meters
 
-fig <- ggplot(filter(df2, type == 'high'), aes(datetime, height*A)) +
+fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   geom_point(pch=19, size = 1, color = 'grey') + 
   # geom_point(mapping = aes(datetime, height*A, col = 'red'),
   #            data = filter(df, type == 'high' & height >= 9.5),
@@ -57,7 +57,6 @@ fig <- ggplot(filter(df2, type == 'high'), aes(datetime, height*A)) +
                      limits = c(2,13), expand = c(0,0)) +
   xlab("Year") +
   ylab("High Tide (feet)") +
-  labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") +
   theme(axis.title = element_text(size = fnt),
         axis.text = element_text(size = fnt),
         axis.text.x = element_text(margin = margin(0.5, 0, 0, 0, unit = 'cm')),
@@ -68,10 +67,11 @@ fig <- ggplot(filter(df2, type == 'high'), aes(datetime, height*A)) +
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', size = 0.5),
         legend.position = "none") + 
-  ggtitle("Meridian Landing High Tide Data (downloaded 11/04/2020)") + 
+  ggtitle("Meridian Landing High Tide Data (downloaded 07/08/2021)") + 
   annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
            label = "Hurricane Matthew", col = 'black') + 
-  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Meridian\nFlood Stage", col = 'red')
+  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Meridian\nFlood Stage", col = 'red') + 
+ # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016")
 fig
 
 tiff(file.path(datadir, 'figures/meridian_hightides_alltime-July2021.tiff'),res=150, unit='in', 
