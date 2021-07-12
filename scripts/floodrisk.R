@@ -4,23 +4,25 @@ library(tidyverse)
 library(lubridate)
 
 ## set data directory
-datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
+datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_flood_risk")
+
 
 ## read in high/low tidal data from gauge station 
 ## https://waterdata.usgs.gov/ga/nwis/nwismap/?site_no=022035975&agency_cd=USGS
-## station datum NAVD88 = +1.1 ft
-## VDATUM says Hudson Creek entrance NAVD88 0 ft is 4.177 ft in MLLW, so 5.277 ft for station
-##  convert datum to mllw elevation datum 
+## gage datum is 1.10 feet above NAVD88
 df <- read.delim(file.path(datadir, "data/original/20210708_height_allobserved_ml.txt"), header=TRUE, sep = '\t', dec = '.',
                  skip = 30) %>%
   slice(2:n()) %>%
   rename(high = X35070_00065_00021, low = X35071_00065_00024,
-         quality = X35070_00065_00021_cd, quality2 = X35071_00065_00024_cd) %>%
-  select(-quality, -quality2) %>%
+         hquality = X35070_00065_00021_cd, lquality = X35071_00065_00024_cd) %>%
+  # select(-hquality, -lquality) %>%
+  unite('high', high, hquality) %>%
+  unite('low', low, lquality) %>%
   gather(key = type, value = height, 4:5) %>%
+  separate(height, c('height', 'quality'), sep = '_') %>%
   mutate(height = as.numeric(height)) %>%
   filter(type == "high") %>%
-  mutate(height = height + 4.177-1.1, year = year(datetime))
+  mutate(height = height + 4.18-1.1, year = year(datetime))
 
 df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct format
 
@@ -48,8 +50,7 @@ xbreaks <- rev(c(1,2,5,10,20,30,40,50,60,70,80,90,95,98,99,99.5,99.9)/100)
 ggplot(df4, aes(height, rev(P))) + 
   geom_point() + 
   scale_y_continuous(trans='probit', breaks = xbreaks, minor_breaks=qnorm(xbreaks)) +
-  scale_x_log10(breaks=seq(0,10, 1))
-
+  scale_x_log10(breaks=seq(0,10, 1)) + 
   labs(x="Exceedance Probability", y="Height (feet)")
 
 ## https://stackoverflow.com/questions/17823474/my-probability-plot-and-log-scales-do-not-line-up-with-my-gridlines-using-ggplo
