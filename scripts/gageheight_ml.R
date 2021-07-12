@@ -14,9 +14,12 @@ df <- read.delim(file.path(datadir, "data/original/20210708_height_allobserved_m
                  skip = 30) %>%
   slice(2:n()) %>%
   rename(high = X35070_00065_00021, low = X35071_00065_00024,
-         quality = X35070_00065_00021_cd, quality2 = X35071_00065_00024_cd) %>%
-  select(-quality, -quality2) %>%
+         hquality = X35070_00065_00021_cd, lquality = X35071_00065_00024_cd) %>%
+  # select(-hquality, -lquality) %>%
+  unite('high', high, hquality) %>%
+  unite('low', low, lquality) %>%
   gather(key = type, value = height, 4:5) %>%
+  separate(height, c('height', 'quality'), sep = '_') %>%
   mutate(height = as.numeric(height))
 
 df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct format
@@ -70,11 +73,11 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   ggtitle("Meridian Landing High Tide Data (downloaded 07/08/2021)") + 
   annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
            label = "Hurricane Matthew", col = 'black') + 
-  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Meridian\nFlood Stage", col = 'red') + 
- # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016")
+  # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
+  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Meridian\nFlood Stage", col = 'red')
 fig
 
-tiff(file.path(datadir, 'figures/meridian_hightides_alltime-July2021.tiff'),res=150, unit='in', 
-     width = 13.33, height = 7.5, compression = 'lzw')
-fig
-dev.off()
+# tiff(file.path(datadir, 'figures/meridian_hightides_alltime-July2021.tiff'),res=150, unit='in', 
+#      width = 13.33, height = 7.5, compression = 'lzw')
+# fig
+# dev.off()
