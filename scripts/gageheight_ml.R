@@ -5,7 +5,7 @@ library(lubridate)
 ##library(timeSeries)
 
 ## set data directory
-datadir <- "/Users/dhardy/Dropbox/r_data/georgia_hurricanes"
+datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 
 ## read in high/low tidal data from gauge station 
 ## https://waterdata.usgs.gov/ga/nwis/nwismap/?site_no=022035975&agency_cd=USGS
@@ -42,17 +42,18 @@ lo10 <-
   top_n(10, height)
 
 # lims <- as.POSIXct(strptime(c("2011-01-01 03:00","2011-01-01 16:00"), format = "%Y-%m-%d %H:%M"))    
-fnt <- 12
+fnt <- 10
 A <- 1## convert to meters
 
-fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
-  geom_point(pch=19, size = 1, color = 'grey') + 
-  # geom_point(mapping = aes(datetime, height*A, col = 'red'),
-  #            data = filter(df, type == 'high' & height >= 9.5),
-  #            size = 5, pch = 17, inherit.aes = TRUE) +
-  geom_smooth(method = lm, col = 'black', size = 0.5) + 
-  geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
-  geom_hline(yintercept = 10.2*A, color = 'red', linetype = 'dashed') + ## 10.2 feet is flood stage at Meridian
+fig <- ggplot(filter(df2, type == 'high'), aes(datetime, height*A)) +
+  geom_point(pch=19, size = 0.1, color = 'grey') + 
+  geom_point(mapping = aes(datetime, height*A, col = 'red'),
+             data = filter(df2, type == 'high' & height >= 9.7),
+             size = 2, pch = 17, inherit.aes = TRUE) +
+  geom_smooth(method = lm, col = 'black', size = 0.1) + 
+  # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
+  geom_hline(yintercept = 9.7*A, color = 'red', linetype = 'dashed') + ## 10.2 feet is flood stage at Meridian
+  geom_hline(yintercept = 11.2*A, color = 'red', linetype = 'dashed') + ## 10.2 feet is flood stage at Meridian
   scale_x_datetime(date_breaks = "2 years", date_minor_breaks = '1 year', date_labels = "%Y", 
                    limits = c(df$datetime[1], last(df$datetime)), expand = c(0.01, 0.0)) + 
   scale_y_continuous(breaks = seq(2,13,1),
@@ -70,14 +71,22 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', size = 0.5),
         legend.position = "none") + 
-  ggtitle("Meridian Landing High Tide Data (downloaded 07/08/2021)") + 
-  annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
-           label = "Hurricane Matthew", col = 'black') + 
+  # ggtitle("Meridian Landing High Tide Data (downloaded 07/08/2021)") + 
+  # annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
+  #          label = "Hurricane Matthew", col = 'black') + 
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
-  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Meridian\nFlood Stage", col = 'red')
+  annotate(geom="text", y = 11.2*A, x = df$datetime[2700], label = "Major\nFlood Stage", col = 'red') +
+  annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Nusiance\nFlooding", col = 'red') + 
+  annotate(geom="text", y = 11.95*A, x = df$datetime[6185], label = "Irma", col = 'red', hjust = -0.1, vjust = 0.1) + 
+  annotate(geom="text", y = 11.27*A, x = df$datetime[5846], label = "Matthew", col = 'red', hjust = -0.1, vjust = 0.1)
 fig
 
-# tiff(file.path(datadir, 'figures/meridian_hightides_alltime-July2021.tiff'),res=150, unit='in', 
+# tiff(file.path(datadir, 'figures/legacy-vulnerability-fig.tiff'),res=300, unit='in', 
 #      width = 13.33, height = 7.5, compression = 'lzw')
 # fig
 # dev.off()
+
+tiff(file.path(datadir, 'figures/legacy-vulnerability-fig.tiff'),res=300, unit='in',
+     width = 6, height = 4, compression = 'lzw')
+fig
+dev.off()
