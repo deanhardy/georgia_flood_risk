@@ -46,12 +46,16 @@ lo10 <-
 fnt <- 10
 A <- 1## convert to meters
 
+## working on counting number floods since 2015 and calculating percentage
+fld <- df %>% filter(height >= 10.2) %>%
+  mutate(group = ifelse(datetime > '2015-01-01', 'recent', 'older'))
+
 fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   geom_point(pch=19, size = 0.1, color = 'grey') + 
   geom_point(mapping = aes(datetime, height*A, col = 'red'),
              data = filter(df, type == 'high' & height >= 10.7),
              size = 2, pch = 17, inherit.aes = TRUE) +
-  geom_smooth(method = lm, col = 'black', size = 0.1) + 
+  geom_smooth(method = loess, col = 'black', size = 0.1) + 
   # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
   geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
   geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed') + ## 10.2 feet is flood stage at Meridian
