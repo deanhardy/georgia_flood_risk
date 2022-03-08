@@ -84,7 +84,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
   # annotate(geom="text", y = 11.2*A, x = df$datetime[3700], label = "Major", col = 'black', vjust = -0.4) +
   # annotate(geom="text", y = 10.7*A, x = df$datetime[3700], label = "Moderate", col = 'red', vjust = 0.2) +
-  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood/nStage", col = 'black', vjust = -0.4) +
+  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood\nStage", col = 'black', vjust = 0.4) +
   # annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Nusiance", col = 'red', vjust = 0.2) + 
   annotate(geom="text", y = 11.24*A, x = df$datetime[1800], label = "TS Tammy", col = 'red', hjust = -0.1, vjust = 0.1) + 
   annotate(geom="text", y = 13.05*A, x = df$datetime[6185], label = "Irma", col = 'red', hjust = -0.1, vjust = 0.1) + 
