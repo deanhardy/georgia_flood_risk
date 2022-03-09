@@ -53,14 +53,14 @@ fld <- df %>% filter(height >= 10.2) %>%
 fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   geom_point(pch=19, size = 0.1, color = 'grey') + 
   geom_point(mapping = aes(datetime, height*A, col = 'red'),
-             data = filter(df, type == 'high' & height >= 10.7),
+             data = filter(df, type == 'high' & height >= 11.2),
              size = 2, pch = 17, inherit.aes = TRUE) +
   geom_smooth(method = lm, col = 'black', size = 0.1) + 
   # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
   # geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
-  geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed') + ## 10.2 feet is flood stage at Meridian
+  geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 10.2 feet is flood stage at Meridian
   # geom_hline(yintercept = 10.7*A, color = 'black', linetype = 'dashed') + ## 10.7 feet is moderate flood stage at Meridian
-  # geom_hline(yintercept = 11.2*A, color = 'black', linetype = 'dashed') + ## 11.2 feet is major flood stage at Meridian
+  geom_hline(yintercept = 11.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 11.2 feet is major flood stage at Meridian
   scale_x_datetime(date_breaks = "2 years", date_minor_breaks = '1 year', date_labels = "%Y", 
                    limits = c(df$datetime[1], last(df$datetime)), expand = c(0.01, 0.0)) + 
   scale_y_continuous(breaks = seq(2,14,1),
@@ -82,13 +82,14 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   # annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
   #          label = "Hurricane Matthew", col = 'black') + 
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
-  # annotate(geom="text", y = 11.2*A, x = df$datetime[3700], label = "Major", col = 'black', vjust = -0.4) +
+  annotate(geom="text", y = 11.2*A, x = df$datetime[3700], label = "Major Flood", col = 'black', vjust = -0.1) +
   # annotate(geom="text", y = 10.7*A, x = df$datetime[3700], label = "Moderate", col = 'red', vjust = 0.2) +
-  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood\nStage", col = 'black', vjust = 0.4) +
+  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood Stage", col = 'black', vjust = -0.1) +
   # annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Nusiance", col = 'red', vjust = 0.2) + 
-  annotate(geom="text", y = 11.24*A, x = df$datetime[1800], label = "TS Tammy", col = 'red', hjust = -0.1, vjust = 0.1) + 
-  annotate(geom="text", y = 13.05*A, x = df$datetime[6185], label = "Irma", col = 'red', hjust = -0.1, vjust = 0.1) + 
-  annotate(geom="text", y = 11.27*A, x = df$datetime[5846], label = "Matthew", col = 'red', hjust = -0.1, vjust = 0.1)
+  annotate(geom="text", y = 11.78*A, x = df$datetime[790], label = "Nor'easter + Spring Tide", col = 'red', hjust = -0.04, vjust = -0.1) + 
+  annotate(geom="text", y = 11.24*A, x = df$datetime[1826], label = "TS Tammy", col = 'red', hjust = -0.1, vjust = -0.1) + 
+  annotate(geom="text", y = 13.05*A, x = df$datetime[6185], label = "Irma", col = 'red', hjust = -0.1, vjust = -0.1) + 
+  annotate(geom="text", y = 11.27*A, x = df$datetime[5846], label = "Matthew", col = 'red', hjust = -0.1, vjust = -0.1)
 fig
 
 # tiff(file.path(datadir, 'figures/legacy-vulnerability-fig.tiff'),res=300, unit='in', 
@@ -96,7 +97,7 @@ fig
 # fig
 # dev.off()
 
-tiff(file.path(datadir, 'figures/legacy-vulnerability-fig.tiff'),res=300, unit='in',
-     width = 6, height = 4, compression = 'lzw')
+tiff(file.path(datadir, 'figures/legacy-vulnerability-fig.tiff'),res=300, unit='cm',
+     width = 18, height = 12, compression = 'lzw')
 fig
 dev.off()
