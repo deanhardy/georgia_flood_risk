@@ -102,4 +102,8 @@ tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300
      width = 10, height = 7, compression = 'lzw')
 fig
 dev.off()
- 
+
+jpeg(file.path(datadir, 'figures/meridian_landing_hightide_trend.jpg'), res=300, unit='in',
+     width = 10, height = 7)
+fig
+dev.off()
