@@ -1,5 +1,5 @@
 # set working directory on Windows
-setwd("C:/Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
+setwd("//Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
 
 ## Tidy spatial data in R
 ## http://strimas.com/r/tidy-sf/
