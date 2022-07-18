@@ -1,11 +1,10 @@
-# set working directory on Windows
-setwd("C:/Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
+rm(list=ls())
 
 ## Tidy spatial data in R
 ## http://strimas.com/r/tidy-sf/
 ## https://github.com/SESYNC-ci/geospatial-packages-in-R-lesson
 
-## The motiviation for this is both Hurricane Matthew and Irma as well as Bossak et al's
+## The motivation for this is both Hurricane Matthew and Irma as well as Bossak et al's
 ## (2014) analysis of Georgia landfalling hurricanes in SE Geographer; My analysis is currently
 ## missing those in their database:
 # Sep 1-13, 1878
@@ -18,7 +17,7 @@ setwd("C:/Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
 
 
 library(tidyverse) ## load tidyverse package
-library(HURDAT) ## load hurdat package
+# library(HURDAT) ## load hurdat package
 library(sf)
 library(gridExtra)
 library(maps)
@@ -27,9 +26,37 @@ library(RColorBrewer)
 library(stringr)
 library(gtable)
 library(grid)
+library(lubridate)
+
+## set data directory
+datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 
 ## import Atlantic storm data from HURDAT2
-AL <- get_hurdat(basin = "AL")
+# AL <- get_hurdat(basin = "AL")
+
+AL <- read.csv2(paste0(datadir, '/data/original/hurdat2-1851-2020-020922.txt'), sep = ',', header = FALSE)
+
+#####
+#####
+## since hurdat package is depricated (at least temporarily) this code doesn't work
+
+######################################
+## converting and exporting dplyr storms data
+######################################
+
+## convert hurdat sample data from dplyr to spatial object
+ALpt <- 
+  storms %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326, agr = "constant") %>%
+  rename(ts_diam = tropicalstorm_force_diameter, hu_diam = hurricane_force_diameter) %>%
+  mutate(date = ymd(paste(year, month, day)))
+
+st_write(ALpt, file.path(datadir, 'data/hurdat2_sample_pts.shp'), 'ESRI Shapefile', delete_dsn=TRUE)
+
+ALpt_hu <- ALpt %>%
+  filter(status == 'hurricane')
+  
+###########################################
 
 ## rearrange Key as YYYYBBSS (year, basin, storm number)
 AL <- 
