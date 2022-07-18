@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 rm(list=ls())
+=======
+# set working directory on Windows
+setwd("//Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
+>>>>>>> 0c7fdcb1c0df36e49e2b48546a0381d3dcabdc2c
 
 ## Tidy spatial data in R
 ## http://strimas.com/r/tidy-sf/

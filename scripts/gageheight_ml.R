@@ -55,7 +55,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   geom_point(mapping = aes(datetime, height*A, col = 'red'),
              data = filter(df, type == 'high' & height >= 11.2),
              size = 2, pch = 17, inherit.aes = TRUE) +
-  geom_smooth(method = lm, col = 'black', size = 0.1) + 
+  geom_smooth(method = lm, col = 'black', size = 0.5) + 
   # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
   # geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
   geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 10.2 feet is flood stage at Meridian
@@ -65,7 +65,8 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
                    limits = c(df$datetime[1], last(df$datetime)), expand = c(0.01, 0.0)) + 
   scale_y_continuous(breaks = seq(2,14,1),
                      labels = seq(2,14,1),
-                     limits = c(2,14), expand = c(0,0)) +
+                     limits = c(2,14), expand = c(0,0),
+                     sec.axis = dup_axis(name = '', labels = NULL)) +
   xlab("Year") +
   ylab("High Tide (feet)") +
   theme(axis.title = element_text(size = fnt),
@@ -73,12 +74,12 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
         axis.text.x = element_text(margin = margin(0.5, 0, 0, 0, unit = 'cm')),
         axis.text.y = element_text(margin = margin(0, 0.5, 0, 0, unit = 'cm')),
         axis.ticks.length=unit(-0.1, "cm"),
-        axis.ticks = element_line(size = 0.4),
+        axis.ticks = element_line(size = 0.4), 
         title = element_text(size = fnt),
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', size = 0.5),
         legend.position = "none") + 
-  # ggtitle("Meridian Landing High Tide Data (downloaded 07/08/2021)") + 
+  ggtitle("Meridian Landing High Tide Trend") +
   # annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
   #          label = "Hurricane Matthew", col = 'black') + 
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
@@ -97,7 +98,12 @@ fig
 # fig
 # dev.off()
 
-tiff(file.path(datadir, 'figures/legacy-vulnerability-fig.tiff'),res=300, unit='cm',
-     width = 18, height = 12, compression = 'lzw')
+tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300, unit='in',
+     width = 10, height = 7, compression = 'lzw')
+fig
+dev.off()
+
+jpeg(file.path(datadir, 'figures/meridian_landing_hightide_trend.jpg'), res=300, unit='in',
+     width = 10, height = 7)
 fig
 dev.off()
