@@ -33,3 +33,28 @@ ggplot(df2, aes(datetime, navd88)) +
 
 write_csv(df, paste0(datadir, '/data/meridian_071031-220718.csv'))
 
+
+##############################################
+## SINERR SWMP Data for Marsh Landing
+##############################################
+
+## read in nerr data
+nerr <- read_csv(paste0(datadir, '/data/original/220719-sinerr-all/sapldwq2021.csv')) %>%
+  mutate(DateTimeStamp = as.POSIXct(DateTimeStamp, format = "%m/%d/%Y %H:%M")) %>%
+  mutate(date = as.Date(DateTimeStamp),
+         navd88 = Depth - 4.345) %>%
+  filter(Depth > 0)
+
+yr <- year(nerr$date)
+  
+nerr_dl <- nerr %>%
+  group_by(date) %>%
+  summarise(daily_level = mean(navd88))
+
+ggplot(nerr_dl, aes(date, daily_level)) + 
+  geom_line() + 
+  scale_x_date(name = yr, breaks = '1 month', date_labels = '%m/%d') + 
+  scale_y_continuous(name = 'Mean Water Level (m NAVD88)') + 
+  ggtitle("Marsh landing SINERR Station")
+
+
