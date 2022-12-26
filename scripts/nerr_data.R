@@ -9,17 +9,22 @@ library(dataRetrieval)
 ## set data directory
 datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 
+## list of codes
+codes <- parameterCdFile
+
 # Hudson River, Meridian, GA
 siteNo <- "022035975"
 pCode <- "00065"
-start.date <- "2007-10-01"
-end.date <- "2022-07-17"
+statCode <- "00021"
+start.date <- "2000-10-06" ## earliest available date
+end.date <- "2022-12-25"
 
 df <- readNWISuv(siteNumbers = siteNo,
                      parameterCd = pCode,
                      startDate = start.date,
                      endDate = end.date)
 
+  
 ## station datum NAVD88 = +1.1 ft
 ## VDATUM says Hudson Creek entrance NAVD88 0 ft is 4.177 ft in MLLW, so 5.277 ft for station
 ##  convert datum to mllw elevation datum 
@@ -31,7 +36,7 @@ df2 <- mutate(df, navd88 = X_00065_00000 + 4.18) %>%
 ggplot(df2, aes(datetime, navd88)) + 
   geom_line()
 
-write_csv(df, paste0(datadir, '/data/meridian_071031-220718.csv'))
+# write_csv(df, paste0(datadir, '/data/meridian_071001-220718.csv'))
 
 
 ##############################################
