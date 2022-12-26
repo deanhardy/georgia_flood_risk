@@ -2,6 +2,7 @@ rm(list=ls())
 
 library(tidyverse) ## load tidyverse package
 library(lubridate)
+library(dataRetrieval)
 ##library(timeSeries)
 
 ## set data directory
