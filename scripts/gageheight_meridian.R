@@ -125,8 +125,8 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
            hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 13.05*A, x = as.POSIXct('2017-09-10 20:00:00'), label = "Irma", col = 'red', 
            hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
-  annotate(geom="text", y = 11.36*A, x = as.POSIXct('2022-11-09 19:00:00'), label = "Ian", col = 'red', 
-           hjust = 1.4, vjust = -0.1, size = ant.fnt) + 
+  annotate(geom="text", y = 11.36*A, x = as.POSIXct('2022-11-09 19:00:00'), label = "Nicole", col = 'red', 
+           hjust = 1.2, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 11.27*A, x = as.POSIXct('2016-10-06 20:00:00'), label = "Matthew", col = 'red', 
            hjust = -0.1, vjust = -0.1, size = ant.fnt)
 fig
