@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065"
 statCode <- "00021"
 start.date <- "2000-10-06" ## earliest available date
-end.date <- "2022-12-25"
+end.date <- "2022-12-31"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -47,7 +47,7 @@ df$datetime <- as.POSIXct(df$datetime) ## convert datetime column to correct for
 #   mutate(height = as.numeric(height))
 
 
-## station datum NAVD88 = +1.1 ft
+## station datum NAVD88 = +1.1 ft... no longer???
 ## VDATUM says Hudson Creek entrance NAVD88 0 ft is 4.177 ft in MLLW, so 5.277 ft for station
 ##  convert datum to mllw elevation datum 
 df <- mutate(df, height = height + 4.18) %>% 
@@ -149,4 +149,86 @@ dev.off()
 jpeg(file.path(datadir, 'figures/meridian_landing_hightide_trend.jpg'), res=300, unit='in',
      width = 10, height = 7)
 fig
+dev.off()
+
+##########################
+## averages by unit time
+##########################
+df2 <- df %>%
+  mutate(prd = floor_date(datetime, "month")) %>%
+  group_by(prd) %>%
+  summarize(avg = mean(height))
+
+ggplot(df2, aes(prd, avg)) + 
+  geom_point() + 
+  geom_smooth(method = lm, se = F)
+
+
+#####################################
+## count number of events above MSL+1.7m
+#####################################
+df3 <- df %>%
+  filter(height > (3.784 + 5.577)) %>% ## MSL for station plus 1.7 meters
+  mutate(x = floor_date(datetime, "year")) %>%
+  mutate(x = year(x)) %>%
+  group_by(x) %>%
+  summarise(y = n())
+
+## https://stackoverflow.com/questions/37329074/geom-smooth-and-exponential-fits
+linear.model <-lm(y ~ x, df3)
+log.model <-lm(log(y) ~ x, df3)
+exp.model <-lm(y ~ exp(x), df3)
+
+log.model.df <- data.frame(x = df3$x,
+                           y = exp(fitted(log.model)))
+
+ext <- ggplot(df3, aes(x, y, label = y)) + 
+  geom_line(color = 'blue') +
+  geom_text(size = 8) + 
+  # geom_smooth(method="lm", aes(color="Exp Model"), formula= (y ~ exp(x)), se=FALSE, linetype = 1) +
+  geom_line(data = log.model.df, aes(x, y, color = "Log Model"), size = 1, linetype = 1, show.legend = F) + 
+  # guides(color = guide_legend("Model Type")) + 
+  scale_x_continuous(breaks = seq(2000, 2022, 5), minor_breaks = seq(2000,2022,1)) + 
+  theme_minimal(base_size = 18) + 
+  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 1.7m (MSL)")
+ext
+
+png(file.path(datadir, 'figures/meridian_landing_extreme_events.png'), res = 150, unit = 'in',
+    width = 13.33, height = 7)
+ext
+dev.off()
+
+
+#####################################
+## count number of events above action stage
+#####################################
+df4 <- df %>%
+  filter(height > (9.7)) %>% ## MSL for station plus 1.7 meters
+  mutate(x = floor_date(datetime, "year")) %>%
+  mutate(x = year(x)) %>%
+  group_by(x) %>%
+  summarise(y = n())
+
+## https://stackoverflow.com/questions/37329074/geom-smooth-and-exponential-fits
+linear.model <-lm(y ~ x, df4)
+log.model <-lm(log(y) ~ x, df4)
+exp.model <-lm(y ~ exp(x), df4)
+
+log.model.df <- data.frame(x = df4$x,
+                           y = exp(fitted(log.model)))
+
+ext <- ggplot(df4, aes(x, y, label = y)) + 
+  geom_line(color = 'blue') +
+  geom_text(size = 8) + 
+  # geom_smooth(method="lm", aes(color="Exp Model"), formula= (y ~ exp(x)), se=FALSE, linetype = 1) +
+  geom_line(data = log.model.df, aes(x, y, color = "Log Model"), size = 1, linetype = 1, show.legend = F) + 
+  # guides(color = guide_legend("Model Type")) + 
+  scale_x_continuous(breaks = seq(2000, 2022, 5), minor_breaks = seq(2000,2022,1)) + 
+  theme_minimal(base_size = 18) + 
+  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.2 ft (Action Stage)")
+ext
+
+png(file.path(datadir, 'figures/meridian_landing_action_stage.png'), res = 150, unit = 'in',
+    width = 13.33, height = 7)
+ext
 dev.off()
