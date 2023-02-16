@@ -177,7 +177,7 @@ df3 <- df %>%
 ## https://stackoverflow.com/questions/37329074/geom-smooth-and-exponential-fits
 linear.model <-lm(y ~ x, df3)
 log.model <-lm(log(y) ~ x, df3)
-exp.model <-lm(y ~ exp(x), df3)
+# exp.model <-lm(y ~ exp(x), df3)
 
 log.model.df <- data.frame(x = df3$x,
                            y = exp(fitted(log.model)))
@@ -212,7 +212,7 @@ df4 <- df %>%
 ## https://stackoverflow.com/questions/37329074/geom-smooth-and-exponential-fits
 linear.model <-lm(y ~ x, df4)
 log.model <-lm(log(y) ~ x, df4)
-exp.model <-lm(y ~ exp(x), df4)
+# exp.model <-lm(y ~ exp(x), df4)
 
 log.model.df <- data.frame(x = df4$x,
                            y = exp(fitted(log.model)))
@@ -225,7 +225,7 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   # guides(color = guide_legend("Model Type")) + 
   scale_x_continuous(breaks = seq(2000, 2022, 5), minor_breaks = seq(2000,2022,1)) + 
   theme_minimal(base_size = 18) + 
-  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.2 ft (Action Stage)")
+  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.7 ft (Action Stage)")
 ext
 
 png(file.path(datadir, 'figures/meridian_landing_action_stage.png'), res = 150, unit = 'in',
