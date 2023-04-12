@@ -16,7 +16,7 @@ datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 siteNo <- "022035975"
 pCode <- "00065"
 statCode <- "00021"
-start.date <- "2000-10-06" ## earliest available date
+start.date <- "2007-10-01" ## earliest available date
 end.date <- "2022-12-31"
 
 df <- readNWISdv(siteNumbers = siteNo,
@@ -66,7 +66,7 @@ df <- mutate(df, height = height + 4.18) %>%
 #   top_n(10, height)
 
 # lims <- as.POSIXct(strptime(c("2011-01-01 03:00","2011-01-01 16:00"), format = "%Y-%m-%d %H:%M"))    
-fnt <- 18 ## figure text size
+fnt <- 12 ## figure text size
 ant.fnt <- 6 ## annotation text size
 A <- 1## convert to meters/feet
 
@@ -111,18 +111,18 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', size = 0.5),
         legend.position = "none") + 
-  ggtitle("Meridian Landing High Tide Trend") +
+  # ggtitle("Meridian Landing High Tide Trend") +
   # annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
   #          label = "Hurricane Matthew", col = 'black') + 
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
-  annotate(geom="text", y = 11.2*A, x = df$datetime[3700], label = "Major Flood", col = 'black', vjust = -0.5, size = ant.fnt) +
+  annotate(geom="text", y = 11.2*A, x = df$datetime[2200], label = "Major Flood", col = 'black', vjust = -0.5, size = ant.fnt) +
   # annotate(geom="text", y = 10.7*A, x = df$datetime[3700], label = "Moderate", col = 'red', vjust = 0.2) +
-  annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
+  annotate(geom="text", y = 10.2*A, x = df$datetime[2200], label = "Flood Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
   # annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Nusiance", col = 'red', vjust = 0.2) + 
-  annotate(geom="text", y = 11.78*A, x = as.POSIXct('2002-12-03 19:00:00'), label = "Nor'easter + Spring Tide", col = 'red', 
-           hjust = -0.04, vjust = -0.1, size = ant.fnt) + 
-  annotate(geom="text", y = 11.24*A, x = as.POSIXct('2005-10-04 20:00:00'), label = "TS Tammy", col = 'red', 
-           hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
+  # annotate(geom="text", y = 11.78*A, x = as.POSIXct('2002-12-03 19:00:00'), label = "Nor'easter + Spring Tide", col = 'red', 
+  #          hjust = -0.04, vjust = -0.1, size = ant.fnt) + 
+  # annotate(geom="text", y = 11.24*A, x = as.POSIXct('2005-10-04 20:00:00'), label = "TS Tammy", col = 'red', 
+  #          hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 13.05*A, x = as.POSIXct('2017-09-10 20:00:00'), label = "Irma", col = 'red', 
            hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 11.36*A, x = as.POSIXct('2022-11-09 19:00:00'), label = "Nicole", col = 'red', 
@@ -136,12 +136,12 @@ fig
 # fig
 # dev.off()
 
-tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300, unit='in',
-     width = 10, height = 7, compression = 'lzw')
+tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300, unit='cm',
+     width = 19, height = 13.3, compression = 'lzw')
 fig
 dev.off()
 
-png(file.path(datadir, 'figures/meridian_landing_hightide_trend.png'), res = 150, unit = 'in',
+  png(file.path(datadir, 'figures/meridian_landing_hightide_trend.png'), res = 150, unit = 'in',
     width = 13.33, height = 7)
 fig
 dev.off()
