@@ -1,9 +1,7 @@
-<<<<<<< HEAD
 rm(list=ls())
-=======
+
 # set working directory on Windows
-setwd("//Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
->>>>>>> 0c7fdcb1c0df36e49e2b48546a0381d3dcabdc2c
+# setwd("//Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
 
 ## Tidy spatial data in R
 ## http://strimas.com/r/tidy-sf/
@@ -22,7 +20,6 @@ setwd("//Users/dhardy/Dropbox/sesync/outreach/DarienNews/hurricanes/R")
 
 
 library(tidyverse) ## load tidyverse package
-# library(HURDAT) ## load hurdat package
 library(sf)
 library(gridExtra)
 library(maps)
