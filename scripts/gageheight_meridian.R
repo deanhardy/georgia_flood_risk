@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065"
 statCode <- "00021"
 start.date <- "2007-10-01" ## earliest available date
-end.date <- "2022-12-31"
+end.date <- "2023-04-3"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -66,13 +66,13 @@ df <- mutate(df, height = height + 4.18) %>%
 #   top_n(10, height)
 
 # lims <- as.POSIXct(strptime(c("2011-01-01 03:00","2011-01-01 16:00"), format = "%Y-%m-%d %H:%M"))    
-fnt <- 12 ## figure text size
+fnt <- 18 ## figure text size
 ant.fnt <- 6 ## annotation text size
 A <- 1## convert to meters/feet
 
 ## working on counting number floods since 2015 and calculating percentage
 fld <- df %>% filter(height >= 10.2) %>%
-  mutate(group = ifelse(datetime > '2015-01-01', 'recent', 'older'))
+  mutate(group = ifelse(datetime > '2015-10-01', 'recent', 'older'))
 
 ## calc percent floods
 pct <- fld %>% group_by(group) %>% summarise(n = n()) %>%
@@ -93,11 +93,11 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 10.2 feet is flood stage at Meridian
   # geom_hline(yintercept = 10.7*A, color = 'black', linetype = 'dashed') + ## 10.7 feet is moderate flood stage at Meridian
   geom_hline(yintercept = 11.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 11.2 feet is major flood stage at Meridian
-  scale_x_datetime(date_breaks = "2 years", date_minor_breaks = '1 year', date_labels = "%Y", 
+  scale_x_datetime(date_breaks = "1 year", date_minor_breaks = '1 year', date_labels = "%Y", 
                    limits = c(df$datetime[1], last(df$datetime)), expand = c(0.01, 0.0)) + 
-  scale_y_continuous(breaks = seq(2,14,1),
-                     labels = seq(2,14,1),
-                     limits = c(2,14), expand = c(0,0),
+  scale_y_continuous(breaks = seq(4,14,1),
+                     labels = seq(4,14,1),
+                     limits = c(4,14), expand = c(0,0),
                      sec.axis = dup_axis(name = '', labels = NULL)) +
   xlab("Year") +
   ylab("High Tide (feet)") +
@@ -141,13 +141,13 @@ tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300
 fig
 dev.off()
 
-  png(file.path(datadir, 'figures/meridian_landing_hightide_trend.png'), res = 150, unit = 'in',
+png(file.path(datadir, 'figures/meridian_landing_hightide_trend.png'), res = 150, unit = 'in',
     width = 13.33, height = 7)
 fig
 dev.off()
 
 jpeg(file.path(datadir, 'figures/meridian_landing_hightide_trend.jpg'), res=300, unit='in',
-     width = 10, height = 7)
+     width = 13, height = 7)
 fig
 dev.off()
 
