@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065"
 statCode <- "00021"
 start.date <- "2007-10-01" ## earliest available date
-end.date <- "2023-04-3"
+end.date <- "2023-05-30"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -86,10 +86,10 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
              size = 4, pch = 17, inherit.aes = TRUE) +
   geom_point(mapping = aes(datetime, height*A, col = 'red'),
              data = filter(df, type == 'high' & height >= 10.2),
-             size = 0.5, pch = 10, inherit.aes = TRUE) +
+             size = 0.9, pch = 10, inherit.aes = TRUE) +
   geom_smooth(method = lm, col = 'black', size = 0.5) + 
   # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
-  # geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
+  geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 9.7 feet is action stage at Meridian
   geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 10.2 feet is flood stage at Meridian
   # geom_hline(yintercept = 10.7*A, color = 'black', linetype = 'dashed') + ## 10.7 feet is moderate flood stage at Meridian
   geom_hline(yintercept = 11.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 11.2 feet is major flood stage at Meridian
@@ -97,7 +97,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
                    limits = c(df$datetime[1], last(df$datetime)), expand = c(0.01, 0.0)) + 
   scale_y_continuous(breaks = seq(4,14,1),
                      labels = seq(4,14,1),
-                     limits = c(4,14), expand = c(0,0),
+                     limits = c(4,14),
                      sec.axis = dup_axis(name = '', labels = NULL)) +
   xlab("Year") +
   ylab("High Tide (feet)") +
@@ -118,7 +118,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
   annotate(geom="text", y = 11.2*A, x = df$datetime[2200], label = "Major Flood", col = 'black', vjust = -0.5, size = ant.fnt) +
   # annotate(geom="text", y = 10.7*A, x = df$datetime[3700], label = "Moderate", col = 'red', vjust = 0.2) +
   annotate(geom="text", y = 10.2*A, x = df$datetime[2200], label = "Flood Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
-  # annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Nusiance", col = 'red', vjust = 0.2) + 
+  annotate(geom="text", y = 9.7*A, x = df$datetime[2200], label = "Action Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
   # annotate(geom="text", y = 11.78*A, x = as.POSIXct('2002-12-03 19:00:00'), label = "Nor'easter + Spring Tide", col = 'red', 
   #          hjust = -0.04, vjust = -0.1, size = ant.fnt) + 
   # annotate(geom="text", y = 11.24*A, x = as.POSIXct('2005-10-04 20:00:00'), label = "TS Tammy", col = 'red', 
