@@ -2,7 +2,7 @@ rm(list=ls())
 
 library(tidyverse) ## load tidyverse package
 library(lubridate)
-library(dataRetrieval)
+library(dataRetrieval) ## https://cran.r-project.org/web/packages/dataRetrieval/vignettes/dataRetrieval.html
 ##library(timeSeries)
 
 ## set data directory
@@ -14,8 +14,8 @@ datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 
 # Hudson River, Meridian, GA
 siteNo <- "022035975"
-pCode <- "00065"
-statCode <- "00021"
+pCode <- "00065" ## gage height data
+statCode <- "00021" ## tidal high-high values
 start.date <- "2007-10-01" ## earliest available date
 end.date <- "2023-05-30"
 
@@ -200,10 +200,10 @@ dev.off()
 
 
 #####################################
-## count number of events above action stage
+## count number of events above flood stage
 #####################################
 df4 <- df %>%
-  filter(height > (9.7)) %>% ## MSL for station plus 1.7 meters
+  filter(height > (9.7)) %>%
   mutate(x = floor_date(datetime, "year")) %>%
   mutate(x = year(x)) %>%
   group_by(x) %>%
@@ -224,8 +224,8 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   geom_line(data = log.model.df, aes(x, y, color = "Log Model"), size = 1, linetype = 1, show.legend = F) + 
   # guides(color = guide_legend("Model Type")) + 
   scale_x_continuous(breaks = seq(2005, 2022, 5), minor_breaks = seq(2000,2022,1), limits = c(2005, 2022)) + 
-  theme_minimal(base_size = 18) + 
-  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.7 ft (Action Stage)")
+  theme_bw(base_size = 18) + 
+  labs(x = 'Year', y = 'Events (#)', title = "Events >= 9.7 ft (Action Stage)")
 ext
 
 png(file.path(datadir, 'figures/meridian_landing_action_stage.png'), res = 150, unit = 'in',
