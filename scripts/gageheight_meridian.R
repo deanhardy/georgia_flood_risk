@@ -223,7 +223,7 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   # geom_smooth(method="lm", aes(color="Exp Model"), formula= (y ~ exp(x)), se=FALSE, linetype = 1) +
   geom_line(data = log.model.df, aes(x, y, color = "Log Model"), size = 1, linetype = 1, show.legend = F) + 
   # guides(color = guide_legend("Model Type")) + 
-  scale_x_continuous(breaks = seq(2005, 2022, 5), minor_breaks = seq(2000,2022,1), limits = c(2005, 2022)) + 
+  scale_x_continuous(breaks = seq(2007, 2023, 2), minor_breaks = seq(2007,2023,1), limits = c(2007, 2023)) + 
   theme_bw(base_size = 18) + 
   labs(x = 'Year', y = 'Events (#)', title = "Events >= 9.7 ft (Action Stage)")
 ext
