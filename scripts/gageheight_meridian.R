@@ -2,7 +2,7 @@ rm(list=ls())
 
 library(tidyverse) ## load tidyverse package
 library(lubridate)
-library(dataRetrieval)
+library(dataRetrieval) ## https://cran.r-project.org/web/packages/dataRetrieval/vignettes/dataRetrieval.html
 ##library(timeSeries)
 
 ## set data directory
@@ -14,10 +14,10 @@ datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 
 # Hudson River, Meridian, GA
 siteNo <- "022035975"
-pCode <- "00065"
-statCode <- "00021"
-start.date <- "2000-10-06" ## earliest available date
-end.date <- "2022-12-31"
+pCode <- "00065" ## gage height data
+statCode <- "00021" ## tidal high-high values
+start.date <- "2007-10-01" ## earliest available date
+end.date <- "2023-05-30"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -72,7 +72,7 @@ A <- 1## convert to meters/feet
 
 ## working on counting number floods since 2015 and calculating percentage
 fld <- df %>% filter(height >= 10.2) %>%
-  mutate(group = ifelse(datetime > '2015-01-01', 'recent', 'older'))
+  mutate(group = ifelse(datetime > '2015-10-01', 'recent', 'older'))
 
 ## calc percent floods
 pct <- fld %>% group_by(group) %>% summarise(n = n()) %>%
@@ -86,18 +86,22 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
              size = 4, pch = 17, inherit.aes = TRUE) +
   geom_point(mapping = aes(datetime, height*A, col = 'red'),
              data = filter(df, type == 'high' & height >= 10.2),
-             size = 0.5, pch = 10, inherit.aes = TRUE) +
+             size = 0.9, pch = 10, inherit.aes = TRUE) +
   geom_smooth(method = lm, col = 'black', size = 0.5) + 
   # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
+<<<<<<< HEAD
   geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
+=======
+  geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 9.7 feet is action stage at Meridian
+>>>>>>> f2fcd19fbc60996e0ee28ff88768a4c1a848bd9b
   geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 10.2 feet is flood stage at Meridian
   # geom_hline(yintercept = 10.7*A, color = 'black', linetype = 'dashed') + ## 10.7 feet is moderate flood stage at Meridian
   geom_hline(yintercept = 11.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 11.2 feet is major flood stage at Meridian
-  scale_x_datetime(date_breaks = "2 years", date_minor_breaks = '1 year', date_labels = "%Y", 
+  scale_x_datetime(date_breaks = "1 year", date_minor_breaks = '1 year', date_labels = "%Y", 
                    limits = c(df$datetime[1], last(df$datetime)), expand = c(0.01, 0.0)) + 
-  scale_y_continuous(breaks = seq(2,14,1),
-                     labels = seq(2,14,1),
-                     limits = c(2,14), expand = c(0,0),
+  scale_y_continuous(breaks = seq(4,14,1),
+                     labels = seq(4,14,1),
+                     limits = c(4,14),
                      sec.axis = dup_axis(name = '', labels = NULL)) +
   xlab("Year") +
   ylab("High Tide (feet)") +
@@ -111,18 +115,31 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', size = 0.5),
         legend.position = "none") + 
+<<<<<<< HEAD
   ggtitle("Meridian Landing High Tide Trend (pre-2007 unreliable)") +
+=======
+  # ggtitle("Meridian Landing High Tide Trend") +
+>>>>>>> f2fcd19fbc60996e0ee28ff88768a4c1a848bd9b
   # annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
   #          label = "Hurricane Matthew", col = 'black') + 
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
-  annotate(geom="text", y = 11.2*A, x = df$datetime[3700], label = "Major Flood", col = 'black', vjust = -0.5, size = ant.fnt) +
+  annotate(geom="text", y = 11.2*A, x = df$datetime[2200], label = "Major Flood", col = 'black', vjust = -0.5, size = ant.fnt) +
   # annotate(geom="text", y = 10.7*A, x = df$datetime[3700], label = "Moderate", col = 'red', vjust = 0.2) +
+<<<<<<< HEAD
   annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
   annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Action Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
   annotate(geom="text", y = 11.78*A, x = as.POSIXct('2002-12-03 19:00:00'), label = "Nor'easter + Spring Tide", col = 'red', 
            hjust = -0.04, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 11.24*A, x = as.POSIXct('2005-10-04 20:00:00'), label = "TS Tammy", col = 'red', 
            hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
+=======
+  annotate(geom="text", y = 10.2*A, x = df$datetime[2200], label = "Flood Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
+  annotate(geom="text", y = 9.7*A, x = df$datetime[2200], label = "Action Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
+  # annotate(geom="text", y = 11.78*A, x = as.POSIXct('2002-12-03 19:00:00'), label = "Nor'easter + Spring Tide", col = 'red', 
+  #          hjust = -0.04, vjust = -0.1, size = ant.fnt) + 
+  # annotate(geom="text", y = 11.24*A, x = as.POSIXct('2005-10-04 20:00:00'), label = "TS Tammy", col = 'red', 
+  #          hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
+>>>>>>> f2fcd19fbc60996e0ee28ff88768a4c1a848bd9b
   annotate(geom="text", y = 13.05*A, x = as.POSIXct('2017-09-10 20:00:00'), label = "Irma", col = 'red', 
            hjust = -0.1, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 11.36*A, x = as.POSIXct('2022-11-09 19:00:00'), label = "Nicole", col = 'red', 
@@ -136,8 +153,8 @@ fig
 # fig
 # dev.off()
 
-tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300, unit='in',
-     width = 10, height = 7, compression = 'lzw')
+tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300, unit='cm',
+     width = 19, height = 13.3, compression = 'lzw')
 fig
 dev.off()
 
@@ -147,7 +164,7 @@ fig
 dev.off()
 
 jpeg(file.path(datadir, 'figures/meridian_landing_hightide_trend.jpg'), res=300, unit='in',
-     width = 10, height = 7)
+     width = 13, height = 7)
 fig
 dev.off()
 
@@ -200,10 +217,10 @@ dev.off()
 
 
 #####################################
-## count number of events above action stage
+## count number of events above flood stage
 #####################################
 df4 <- df %>%
-  filter(height > (9.7)) %>% ## MSL for station plus 1.7 meters
+  filter(height > (9.7)) %>%
   mutate(x = floor_date(datetime, "year")) %>%
   mutate(x = year(x)) %>%
   group_by(x) %>%
@@ -223,9 +240,15 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   # geom_smooth(method="lm", aes(color="Exp Model"), formula= (y ~ exp(x)), se=FALSE, linetype = 1) +
   geom_line(data = log.model.df, aes(x, y, color = "Log Model"), size = 1, linetype = 1, show.legend = F) + 
   # guides(color = guide_legend("Model Type")) + 
+<<<<<<< HEAD
   scale_x_continuous(breaks = seq(2000, 2022, 5), minor_breaks = seq(2000,2022,1)) + 
   theme_minimal(base_size = 18) + 
   labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.7 ft (Action Stage)")
+=======
+  scale_x_continuous(breaks = seq(2007, 2023, 2), minor_breaks = seq(2007,2023,1), limits = c(2007, 2023)) + 
+  theme_bw(base_size = 18) + 
+  labs(x = 'Year', y = 'Events (#)', title = "Events >= 9.7 ft (Action Stage)")
+>>>>>>> f2fcd19fbc60996e0ee28ff88768a4c1a848bd9b
 ext
 
 png(file.path(datadir, 'figures/meridian_landing_action_stage.png'), res = 150, unit = 'in',

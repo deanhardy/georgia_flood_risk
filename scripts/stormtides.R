@@ -5,7 +5,7 @@ library(tidyverse) ## load tidyverse package
 library(gridExtra)
 
 ## set data directory
-datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_hurricanes")
+datadir <- ("/Users/dhardy/Dropbox/r_data/georgia_flood_risk")
 datum_conv = 4.178
   
 ## read in tidal data 
