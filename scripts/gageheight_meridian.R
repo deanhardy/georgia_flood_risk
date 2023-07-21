@@ -89,7 +89,7 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
              size = 0.5, pch = 10, inherit.aes = TRUE) +
   geom_smooth(method = lm, col = 'black', size = 0.5) + 
   # geom_vline(xintercept = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), linetype = 'dashed') + 
-  # geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
+  geom_hline(yintercept = 9.7*A, color = 'black', linetype = 'dashed') + ## 9.7 feet is action stage at Meridian
   geom_hline(yintercept = 10.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 10.2 feet is flood stage at Meridian
   # geom_hline(yintercept = 10.7*A, color = 'black', linetype = 'dashed') + ## 10.7 feet is moderate flood stage at Meridian
   geom_hline(yintercept = 11.2*A, color = 'black', linetype = 'dashed', lwd = 0.5) + ## 11.2 feet is major flood stage at Meridian
@@ -111,14 +111,14 @@ fig <- ggplot(filter(df, type == 'high'), aes(datetime, height*A)) +
         panel.grid = element_blank(),
         panel.background = element_rect(fill = 'white', color = 'black', size = 0.5),
         legend.position = "none") + 
-  ggtitle("Meridian Landing High Tide Trend") +
+  ggtitle("Meridian Landing High Tide Trend (pre-2007 unreliable)") +
   # annotate(geom="text", y = 3, x = as.POSIXct('2016-10-07 12:00', format = "%Y-%m-%d %H:%M"), 
   #          label = "Hurricane Matthew", col = 'black') + 
   # labs(caption = "subtracted 1.1 ft following Hurricane Matthew peak on 10/07/2016") + 
   annotate(geom="text", y = 11.2*A, x = df$datetime[3700], label = "Major Flood", col = 'black', vjust = -0.5, size = ant.fnt) +
   # annotate(geom="text", y = 10.7*A, x = df$datetime[3700], label = "Moderate", col = 'red', vjust = 0.2) +
   annotate(geom="text", y = 10.2*A, x = df$datetime[3700], label = "Flood Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
-  # annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Nusiance", col = 'red', vjust = 0.2) + 
+  annotate(geom="text", y = 9.7*A, x = df$datetime[3700], label = "Action Stage", col = 'black', vjust = -0.5, size = ant.fnt) +
   annotate(geom="text", y = 11.78*A, x = as.POSIXct('2002-12-03 19:00:00'), label = "Nor'easter + Spring Tide", col = 'red', 
            hjust = -0.04, vjust = -0.1, size = ant.fnt) + 
   annotate(geom="text", y = 11.24*A, x = as.POSIXct('2005-10-04 20:00:00'), label = "TS Tammy", col = 'red', 
@@ -177,7 +177,7 @@ df3 <- df %>%
 ## https://stackoverflow.com/questions/37329074/geom-smooth-and-exponential-fits
 linear.model <-lm(y ~ x, df3)
 log.model <-lm(log(y) ~ x, df3)
-exp.model <-lm(y ~ exp(x), df3)
+# exp.model <-lm(y ~ exp(x), df3)
 
 log.model.df <- data.frame(x = df3$x,
                            y = exp(fitted(log.model)))
@@ -212,7 +212,7 @@ df4 <- df %>%
 ## https://stackoverflow.com/questions/37329074/geom-smooth-and-exponential-fits
 linear.model <-lm(y ~ x, df4)
 log.model <-lm(log(y) ~ x, df4)
-exp.model <-lm(y ~ exp(x), df4)
+# exp.model <-lm(y ~ exp(x), df4)
 
 log.model.df <- data.frame(x = df4$x,
                            y = exp(fitted(log.model)))
@@ -225,7 +225,7 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   # guides(color = guide_legend("Model Type")) + 
   scale_x_continuous(breaks = seq(2000, 2022, 5), minor_breaks = seq(2000,2022,1)) + 
   theme_minimal(base_size = 18) + 
-  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.2 ft (Action Stage)")
+  labs(x = 'Year', y = '# of Events', title = "Meridian Landing\n# of Events >= 9.7 ft (Action Stage)")
 ext
 
 png(file.path(datadir, 'figures/meridian_landing_action_stage.png'), res = 150, unit = 'in',
