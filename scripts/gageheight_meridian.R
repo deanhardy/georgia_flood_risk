@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065" ## gage height data
 statCode <- "00021" ## tidal high-high values
 start.date <- "2007-10-01" ## earliest available date
-end.date <- "2023-06-30"
+end.date <- "2023-07-24"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -66,7 +66,7 @@ df <- mutate(df, height = height + 4.18) %>%
 #   top_n(10, height)
 
 # lims <- as.POSIXct(strptime(c("2011-01-01 03:00","2011-01-01 16:00"), format = "%Y-%m-%d %H:%M"))    
-fnt <- 18 ## figure text size
+fnt <- 10 ## figure text size
 ant.fnt <- 6 ## annotation text size
 A <- 1## convert to meters/feet
 
