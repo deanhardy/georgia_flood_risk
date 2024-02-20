@@ -9,7 +9,7 @@ library(dataRetrieval) ## https://cran.r-project.org/web/packages/dataRetrieval/
 datadir <- "/Users/dhardy/Dropbox/r_data/georgia_flood_risk"
 
 ####################################################
-## adding automated download process for NERR data 
+## adding automated download process for USGS data 
 ####################################################
 
 # Hudson River, Meridian, GA
@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065" ## gage height data
 statCode <- "00021" ## tidal high-high values
 start.date <- "2007-10-01" ## earliest available date
-end.date <- "2023-07-31"
+end.date <- "2023-12-31"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
