@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065" ## gage height data
 statCode <- "00021" ## tidal high-high values
 start.date <- "2007-10-01" ## earliest available date
-end.date <- "2023-12-31"
+end.date <- "2024-11-30"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -71,7 +71,7 @@ ant.fnt <- 6 ## annotation text size
 A <- 1## convert to meters/feet
 
 ## working on counting number floods since 2015 and calculating percentage
-fld <- df %>% filter(height >= 10.2) %>%
+fld <- df %>% filter(height >= 9.7) %>%
   mutate(group = ifelse(datetime > '2015-10-01', 'recent', 'older'))
 
 ## calc percent floods
@@ -140,7 +140,7 @@ tiff(file.path(datadir, 'figures/meridian_landing_hightide_trend.tiff'), res=300
 fig
 dev.off()
 
-png(file.path(datadir, 'figures/meridian_landing_hightide_trend.png'), res = 150, unit = 'in',
+png(file.path(datadir, 'figures/meridian_landing_hightide_trend_slide.png'), res = 150, unit = 'in',
     width = 13.33, height = 7)
 fig
 dev.off()
@@ -164,10 +164,10 @@ ggplot(df2, aes(prd, avg)) +
 
 
 ############################################
-## count number of events above action stage
+## count number of events above flood stage
 ############################################
 df4 <- df %>%
-  filter(height > (9.7)) %>% ## action stage = 9.7 feet
+  filter(height > (9.7)) %>% ## flood stage = 10.2 feet
   mutate(x = floor_date(datetime, "year")) %>%
   mutate(x = year(x)) %>%
   group_by(x) %>%
@@ -187,18 +187,19 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   geom_line(data = log.model.df, aes(x, y, color = "Log Model"), size = 1, linetype = 1, show.legend = F) + 
   # guides(color = guide_legend("Model Type")) + 
   geom_label() + 
-  scale_x_continuous(breaks = seq(2007, 2023, 2), minor_breaks = seq(2007,2023,1), limits = c(2007, 2023)) + 
+  # geom_text(size = 10) + 
+  scale_x_continuous(breaks = seq(2007, 2024, 2), minor_breaks = seq(2007,2024,1), limits = c(2007, 2024)) + 
   scale_y_continuous(breaks = seq(0,30,5)) + 
-  theme_bw(base_size = 10) + 
-  labs(x = 'Year', y = 'Flood Events (#)')
+  theme_bw(base_size = 24) + 
+  labs(x = 'Year', y = 'Action Stage Events (#)')
 ext
 
-tiff(file.path(datadir, 'figures/meridian_landing_action_stage.tiff'), res = 300, unit = 'in',
+tiff(file.path(datadir, 'figures/meridian_landing_flood_stage.tiff'), res = 300, unit = 'in',
     width = 6.5, height = 4, compression = 'lzw')
 ext
 dev.off()
 
-png(file.path(datadir, 'figures/meridian_landing_action_stage.png'), res = 150, unit = 'in',
+png(file.path(datadir, 'figures/meridian_landing_action_stage_slide.png'), res = 150, unit = 'in',
     width = 13.33, height = 7)
 ext
 dev.off()
