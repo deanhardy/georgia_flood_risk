@@ -17,7 +17,7 @@ siteNo <- "022035975"
 pCode <- "00065" ## gage height data
 statCode <- "00021" ## tidal high-high values
 start.date <- "2007-10-01" ## earliest available date
-end.date <- "2024-11-30"
+end.date <- "2024-12-31"
 
 df <- readNWISdv(siteNumbers = siteNo,
                  parameterCd = pCode,
@@ -190,7 +190,7 @@ ext <- ggplot(df4, aes(x, y, label = y)) +
   # geom_text(size = 10) + 
   scale_x_continuous(breaks = seq(2007, 2024, 2), minor_breaks = seq(2007,2024,1), limits = c(2007, 2024)) + 
   scale_y_continuous(breaks = seq(0,30,5)) + 
-  theme_bw(base_size = 24) + 
+  theme_bw(base_size = 12) + 
   labs(x = 'Year', y = 'Action Stage Events (#)')
 ext
 
